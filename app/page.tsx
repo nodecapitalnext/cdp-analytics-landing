@@ -184,7 +184,7 @@ console.log(data.price.current_usd); // 72340`}
               <a
                 href={plan.name === "FREE" 
                   ? "https://rapidapi.com/nodecapitalnext/api/cdp-crypto-analytics" 
-                  : "https://cdp-analytics-landing.vercel.app/#docs"}
+                  : "https://github.com/nodecapitalnext/cdp-analytics-api#readme"}
                 target="_blank"
                 className={`block text-center py-3 rounded-xl font-semibold transition ${plan.highlight ? "bg-blue-600 hover:bg-blue-500 text-white" : "border border-gray-700 hover:border-gray-500 text-gray-300"}`}
               >
