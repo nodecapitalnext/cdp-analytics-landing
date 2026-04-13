@@ -75,10 +75,10 @@ export default function Home() {
         </div>
         <div className="flex items-center gap-6 text-sm text-gray-400">
           <a href="#endpoints" className="hover:text-white transition">Endpoints</a>
-          <a href="#docs" className="hover:text-white transition">Docs</a>
+          <a href="#docs" className="hover:text-white transition">Demo</a>
           <a href="#pricing" className="hover:text-white transition">Pricing</a>
-          <a href={GITHUB} target="_blank" className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg transition">
-            GitHub →
+          <a href="/docs" className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg transition">
+            How to Use →
           </a>
         </div>
       </nav>
@@ -97,7 +97,7 @@ export default function Home() {
           Pay per request with USDC via x402 — no API keys, no subscriptions.
         </p>
         <div className="flex items-center justify-center gap-4 flex-wrap">
-          <a href="#docs" className="bg-blue-600 hover:bg-blue-500 text-white px-8 py-4 rounded-xl text-lg font-semibold transition">
+          <a href="/docs" className="bg-blue-600 hover:bg-blue-500 text-white px-8 py-4 rounded-xl text-lg font-semibold transition">
             Get Started →
           </a>
           <a href="#endpoints" className="border border-gray-700 hover:border-gray-500 text-gray-300 px-8 py-4 rounded-xl text-lg transition">
