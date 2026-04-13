@@ -13,7 +13,7 @@ export default function Home() {
           <a href="#pricing" className="hover:text-white transition">Pricing</a>
           <a href="#docs" className="hover:text-white transition">Docs</a>
           <a
-            href="https://rapidapi.com/CapitalNode/api/cdp-crypto-analytics"
+            href="https://rapidapi.com/nodecapitalnext/api/cdp-crypto-analytics"
             target="_blank"
             className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg transition"
           >
@@ -37,7 +37,7 @@ export default function Home() {
         </p>
         <div className="flex items-center justify-center gap-4 flex-wrap">
           <a
-            href="https://rapidapi.com/CapitalNode/api/cdp-crypto-analytics"
+            href="https://rapidapi.com/nodecapitalnext/api/cdp-crypto-analytics"
             target="_blank"
             className="bg-blue-600 hover:bg-blue-500 text-white px-8 py-4 rounded-xl text-lg font-semibold transition"
           >
@@ -182,7 +182,9 @@ console.log(data.price.current_usd); // 72340`}
                 ))}
               </ul>
               <a
-                href="https://rapidapi.com/CapitalNode/api/cdp-crypto-analytics"
+                href={plan.name === "FREE" 
+                  ? "https://rapidapi.com/nodecapitalnext/api/cdp-crypto-analytics" 
+                  : "https://cdp-analytics-landing.vercel.app/#docs"}
                 target="_blank"
                 className={`block text-center py-3 rounded-xl font-semibold transition ${plan.highlight ? "bg-blue-600 hover:bg-blue-500 text-white" : "border border-gray-700 hover:border-gray-500 text-gray-300"}`}
               >
