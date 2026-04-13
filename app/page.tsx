@@ -1,7 +1,69 @@
+"use client";
+import { useState } from "react";
+
 const API_BASE = "https://web-production-fd8e8.up.railway.app";
 const GITHUB = "https://github.com/nodecapitalnext/cdp-analytics-api";
 
+type TokenData = {
+  token: { name: string; symbol: string; rank: number };
+  price: { current_usd: number; change_24h_pct: number; change_7d_pct: number; ath: number };
+  analysis: { rsi_7d: number; signal: string; signal_description: string; price_history_7d: number[] };
+  meta: { analyzed_at: string; data_source: string };
+};
+
+function SignalBadge({ signal }: { signal: string }) {
+  const colors: Record<string, string> = {
+    "BUY": "bg-green-500/20 text-green-400 border-green-500/30",
+    "SELL": "bg-red-500/20 text-red-400 border-red-500/30",
+    "HOLD/WATCH": "bg-blue-500/20 text-blue-400 border-blue-500/30",
+    "NEUTRAL": "bg-gray-500/20 text-gray-400 border-gray-500/30",
+    "CAUTION": "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
+  };
+  return (
+    <span className={`px-3 py-1 rounded-full text-sm font-bold border ${colors[signal] || colors["NEUTRAL"]}`}>
+      {signal}
+    </span>
+  );
+}
+
+function MiniChart({ prices }: { prices: number[] }) {
+  if (!prices || prices.length < 2) return null;
+  const min = Math.min(...prices);
+  const max = Math.max(...prices);
+  const range = max - min || 1;
+  const w = 200, h = 60;
+  const points = prices.map((p, i) => `${(i / (prices.length - 1)) * w},${h - ((p - min) / range) * h}`).join(" ");
+  const isUp = prices[prices.length - 1] >= prices[0];
+  return (
+    <svg width={w} height={h} className="overflow-visible">
+      <polyline points={points} fill="none" stroke={isUp ? "#22c55e" : "#ef4444"} strokeWidth="2" />
+    </svg>
+  );
+}
+
 export default function Home() {
+  const [demoInput, setDemoInput] = useState("bitcoin");
+  const [demoResult, setDemoResult] = useState<TokenData | null>(null);
+  const [demoLoading, setDemoLoading] = useState(false);
+  const [demoError, setDemoError] = useState("");
+
+  const runDemo = async () => {
+    if (!demoInput.trim()) return;
+    setDemoLoading(true);
+    setDemoError("");
+    setDemoResult(null);
+    try {
+      const res = await fetch(`/api/demo?type=token&query=${demoInput.trim().toLowerCase()}`);
+      const data = await res.json();
+      if (!res.ok) { setDemoError(data.error || "Not found"); return; }
+      setDemoResult(data);
+    } catch {
+      setDemoError("Request failed");
+    } finally {
+      setDemoLoading(false);
+    }
+  };
+
   return (
     <main className="min-h-screen bg-gray-950 text-white">
 
@@ -127,62 +189,102 @@ export default function Home() {
         </div>
       </section>
 
-      {/* DOCS / CODE */}
+      {/* LIVE DEMO */}
       <section id="docs" className="max-w-6xl mx-auto px-6 py-20 border-t border-gray-800">
-        <h2 className="text-3xl font-bold text-center mb-4">Quick Start</h2>
-        <p className="text-gray-400 text-center mb-12">Install the x402 client and start making requests in minutes</p>
+        <h2 className="text-3xl font-bold text-center mb-4">Live Demo</h2>
+        <p className="text-gray-400 text-center mb-12">Try the token analysis endpoint — real data, no payment needed for the demo</p>
 
-        {/* Step 1 */}
-        <div className="max-w-3xl mx-auto space-y-6">
-          <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
-            <div className="text-sm text-blue-400 font-semibold mb-3">Step 1 — Install</div>
-            <pre className="text-sm text-gray-300 bg-gray-800 rounded-lg p-4 overflow-x-auto">
-{`npm install x402-axios axios`}
-            </pre>
+        <div className="max-w-2xl mx-auto">
+          {/* Input */}
+          <div className="flex gap-3 mb-6">
+            <input
+              type="text"
+              value={demoInput}
+              onChange={(e) => setDemoInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && runDemo()}
+              placeholder="Enter token ID (e.g. bitcoin, ethereum, solana)"
+              className="flex-1 bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition"
+            />
+            <button
+              onClick={runDemo}
+              disabled={demoLoading}
+              className="bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white px-6 py-3 rounded-xl font-semibold transition"
+            >
+              {demoLoading ? "..." : "Analyze →"}
+            </button>
           </div>
 
-          <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
-            <div className="text-sm text-blue-400 font-semibold mb-3">Step 2 — Get USDC on Base</div>
-            <p className="text-sm text-gray-400 mb-3">You need USDC on Base mainnet to pay for requests. Get it from:</p>
-            <div className="flex gap-3 flex-wrap">
-              <a href="https://www.coinbase.com" target="_blank" className="text-sm bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg transition">Coinbase →</a>
-              <a href="https://app.uniswap.org" target="_blank" className="text-sm bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg transition">Uniswap →</a>
-              <a href="https://bridge.base.org" target="_blank" className="text-sm bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg transition">Base Bridge →</a>
+          {/* Quick picks */}
+          <div className="flex gap-2 mb-8 flex-wrap">
+            {["bitcoin", "ethereum", "solana", "chainlink", "uniswap"].map((t) => (
+              <button
+                key={t}
+                onClick={() => { setDemoInput(t); }}
+                className="text-xs bg-gray-800 hover:bg-gray-700 border border-gray-700 px-3 py-1.5 rounded-lg transition text-gray-400 hover:text-white"
+              >
+                {t}
+              </button>
+            ))}
+          </div>
+
+          {/* Error */}
+          {demoError && (
+            <div className="bg-red-950 border border-red-800 text-red-400 rounded-xl p-4 text-sm mb-6">
+              {demoError}
             </div>
-          </div>
+          )}
 
-          <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
-            <div className="text-sm text-blue-400 font-semibold mb-3">Step 3 — Make a request</div>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-3 h-3 rounded-full bg-red-500"></div>
-              <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-              <div className="w-3 h-3 rounded-full bg-green-500"></div>
-              <span className="text-gray-500 text-sm ml-2">example.ts</span>
+          {/* Result */}
+          {demoResult && (
+            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 space-y-6">
+              {/* Header */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-2xl font-bold">{demoResult.token.name} <span className="text-gray-500 text-lg">({demoResult.token.symbol})</span></h3>
+                  <p className="text-gray-500 text-sm">Rank #{demoResult.token.rank}</p>
+                </div>
+                <SignalBadge signal={demoResult.analysis.signal} />
+              </div>
+
+              {/* Price */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-gray-800 rounded-xl p-4">
+                  <div className="text-gray-400 text-xs mb-1">Current Price</div>
+                  <div className="text-2xl font-bold">${demoResult.price.current_usd.toLocaleString()}</div>
+                </div>
+                <div className="bg-gray-800 rounded-xl p-4">
+                  <div className="text-gray-400 text-xs mb-1">24h Change</div>
+                  <div className={`text-2xl font-bold ${demoResult.price.change_24h_pct >= 0 ? "text-green-400" : "text-red-400"}`}>
+                    {demoResult.price.change_24h_pct >= 0 ? "+" : ""}{demoResult.price.change_24h_pct?.toFixed(2)}%
+                  </div>
+                </div>
+              </div>
+
+              {/* Chart + RSI */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-gray-800 rounded-xl p-4">
+                  <div className="text-gray-400 text-xs mb-3">7-Day Price</div>
+                  <MiniChart prices={demoResult.analysis.price_history_7d} />
+                </div>
+                <div className="bg-gray-800 rounded-xl p-4">
+                  <div className="text-gray-400 text-xs mb-1">RSI (7-day)</div>
+                  <div className="text-3xl font-bold mb-1">{demoResult.analysis.rsi_7d}</div>
+                  <div className="text-xs text-gray-500">{demoResult.analysis.signal_description}</div>
+                  <div className="mt-3 h-2 bg-gray-700 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full ${demoResult.analysis.rsi_7d > 70 ? "bg-red-500" : demoResult.analysis.rsi_7d < 30 ? "bg-green-500" : "bg-blue-500"}`}
+                      style={{ width: `${demoResult.analysis.rsi_7d}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="text-xs text-gray-600 border-t border-gray-800 pt-3 flex justify-between">
+                <span>Source: {demoResult.meta.data_source}</span>
+                <span>Demo mode — real requests cost $0.01 USDC</span>
+              </div>
             </div>
-            <pre className="text-sm text-gray-300 overflow-x-auto leading-relaxed">
-{`import axios from "axios";
-import { withPaymentInterceptor, createSigner } from "x402-axios";
-
-// Your EVM private key (wallet with USDC on Base)
-const signer = await createSigner("base", process.env.PRIVATE_KEY);
-const client = withPaymentInterceptor(axios.create(), signer);
-
-// Pays $0.01 USDC automatically, returns Bitcoin analysis
-const { data } = await client.get(
-  "${API_BASE}/v1/analyze/token/bitcoin"
-);
-
-console.log(data.analysis.signal);    // "HOLD/WATCH"
-console.log(data.price.current_usd);  // 72340
-console.log(data.analysis.rsi_7d);    // 67.3`}
-            </pre>
-          </div>
-
-          <div className="text-center pt-4">
-            <a href={GITHUB} target="_blank" className="inline-flex items-center gap-2 bg-gray-800 hover:bg-gray-700 px-6 py-3 rounded-xl transition text-sm">
-              View full source on GitHub →
-            </a>
-          </div>
+          )}
         </div>
       </section>
 
