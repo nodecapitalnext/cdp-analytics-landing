@@ -159,11 +159,10 @@ console.log(data.price.current_usd); // 72340`}
         <h2 className="text-3xl font-bold text-center mb-4">Pricing</h2>
         <p className="text-gray-400 text-center mb-12">Pay only for what you use. No monthly fees.</p>
 
-        <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
           {[
-            { name: "BASIC", price: "Free", sub: "via RapidAPI", features: ["10 requests/month", "All endpoints", "Community support"], cta: "Start Free", highlight: false },
-            { name: "PRO", price: "$9.99", sub: "/month via RapidAPI", features: ["500 requests/month", "All endpoints", "Priority support", "x402 direct access"], cta: "Get Pro", highlight: true },
-            { name: "PAY AS YOU GO", price: "USDC", sub: "via x402 protocol", features: ["Unlimited requests", "$0.01–$0.05/request", "No subscription", "Direct onchain payment"], cta: "Use x402", highlight: false },
+            { name: "FREE", price: "Free", sub: "via RapidAPI", features: ["10 requests/month", "All endpoints", "No credit card needed", "Community support"], cta: "Start Free", highlight: false },
+            { name: "PAY AS YOU GO", price: "USDC", sub: "via x402 protocol", features: ["Unlimited requests", "$0.01–$0.05/request", "No subscription", "Direct onchain payment"], cta: "Use x402", highlight: true },
           ].map((plan) => (
             <div
               key={plan.name}
