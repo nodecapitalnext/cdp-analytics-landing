@@ -139,51 +139,32 @@ export default function Home() {
       {/* ENDPOINTS */}
       <section id="endpoints" className="max-w-6xl mx-auto px-6 py-20">
         <h2 className="text-3xl font-bold text-center mb-4">Endpoints</h2>
-        <p className="text-gray-400 text-center mb-12">Three endpoints, each priced per request in USDC</p>
-        <div className="grid md:grid-cols-3 gap-6">
+        <p className="text-gray-400 text-center mb-12">8 endpoints, each priced per request in USDC</p>
+        <div className="grid md:grid-cols-4 gap-4">
           {[
-            {
-              icon: "🪙",
-              title: "Token Analysis",
-              price: "$0.01",
-              path: "/v1/analyze/token/{symbol}",
-              features: ["Real-time price (USD)", "24h / 7d / 30d changes", "RSI indicator (7-day)", "BUY / SELL / HOLD signal", "Market cap & volume"],
-              example: "bitcoin, ethereum, solana",
-            },
-            {
-              icon: "👛",
-              title: "Wallet Analysis",
-              price: "$0.05",
-              path: "/v1/analyze/wallet/{address}",
-              features: ["ETH balance", "ERC-20 token count", "Last 20 transactions", "Activity score (0-100)", "Sent / received stats"],
-              example: "0xd8dA...96045",
-            },
-            {
-              icon: "🖼️",
-              title: "NFT Collection",
-              price: "$0.03",
-              path: "/v1/analyze/nft/{contract}",
-              features: ["Floor price (ETH)", "Total supply", "OpenSea verification", "Collection description", "Social links"],
-              example: "0xBC4C...f13D (BAYC)",
-            },
+            { icon: "🪙", title: "Token Analysis",   price: "$0.01", path: "/v1/analyze/token/{symbol}",    features: ["Price, RSI, signal", "24h/7d/30d changes", "Market cap & volume"] },
+            { icon: "👛", title: "Wallet Analysis",  price: "$0.05", path: "/v1/analyze/wallet/{address}",  features: ["ETH balance", "Last 20 transactions", "Activity score"] },
+            { icon: "🖼️", title: "NFT Collection",   price: "$0.03", path: "/v1/analyze/nft/{contract}",    features: ["Floor price (ETH)", "Total supply", "OpenSea verified"] },
+            { icon: "💼", title: "Portfolio",         price: "$0.05", path: "/v1/analyze/portfolio/{address}", features: ["All token balances", "USD total value", "Base mainnet"] },
+            { icon: "⛽", title: "Gas Prices",        price: "$0.01", path: "/v1/analyze/gas",               features: ["Base gas price", "Ethereum gas price", "Transfer cost USD"] },
+            { icon: "📈", title: "DeFi Yields",       price: "$0.02", path: "/v1/analyze/defi",              features: ["Best stablecoin APY", "Best ETH/BTC APY", "TVL data"] },
+            { icon: "🔥", title: "Trending",          price: "$0.01", path: "/v1/analyze/trending",          features: ["Trending tokens", "Top 24h gainers", "Search volume"] },
+            { icon: "🐋", title: "Whale Tracker",     price: "$0.03", path: "/v1/analyze/whales",            features: ["Large USDC transfers", "Whale addresses", "Base mainnet"] },
           ].map((ep) => (
-            <div key={ep.title} className="bg-gray-900 border border-gray-800 rounded-2xl p-6 hover:border-gray-600 transition">
-              <div className="text-3xl mb-4">{ep.icon}</div>
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-xl font-semibold">{ep.title}</h3>
-                <span className="text-green-400 font-bold">{ep.price} USDC</span>
+            <div key={ep.title} className="bg-gray-900 border border-gray-800 rounded-2xl p-5 hover:border-gray-600 transition">
+              <div className="text-2xl mb-3">{ep.icon}</div>
+              <div className="flex items-center justify-between mb-1">
+                <h3 className="font-semibold text-sm">{ep.title}</h3>
+                <span className="text-green-400 font-bold text-xs">{ep.price}</span>
               </div>
-              <code className="text-xs text-gray-500 bg-gray-800 px-2 py-1 rounded block mb-4 truncate">{ep.path}</code>
-              <ul className="space-y-2 mb-4">
+              <code className="text-xs text-gray-600 block mb-3 truncate">{ep.path}</code>
+              <ul className="space-y-1">
                 {ep.features.map((f) => (
-                  <li key={f} className="text-sm text-gray-400 flex items-center gap-2">
+                  <li key={f} className="text-xs text-gray-400 flex items-center gap-1">
                     <span className="text-green-500">✓</span> {f}
                   </li>
                 ))}
               </ul>
-              <div className="text-xs text-gray-600 border-t border-gray-800 pt-3">
-                Example: <span className="text-gray-400">{ep.example}</span>
-              </div>
             </div>
           ))}
         </div>
@@ -292,11 +273,12 @@ export default function Home() {
       <section id="pricing" className="max-w-6xl mx-auto px-6 py-20 border-t border-gray-800">
         <h2 className="text-3xl font-bold text-center mb-4">Pricing</h2>
         <p className="text-gray-400 text-center mb-12">Pay only for what you use. No monthly fees, no subscriptions.</p>
-        <div className="grid md:grid-cols-3 gap-6 max-w-3xl mx-auto">
+        <div className="grid md:grid-cols-4 gap-4 max-w-4xl mx-auto">
           {[
-            { endpoint: "🪙 Token Analysis", price: "$0.01", per: "per request" },
-            { endpoint: "👛 Wallet Analysis", price: "$0.05", per: "per request" },
-            { endpoint: "🖼️ NFT Collection", price: "$0.03", per: "per request" },
+            { endpoint: "🪙 Token / Trending / Gas", price: "$0.01", per: "per request" },
+            { endpoint: "📈 DeFi Yields",             price: "$0.02", per: "per request" },
+            { endpoint: "🖼️ NFT / 🐋 Whales",        price: "$0.03", per: "per request" },
+            { endpoint: "👛 Wallet / 💼 Portfolio",   price: "$0.05", per: "per request" },
           ].map((p) => (
             <div key={p.endpoint} className="bg-gray-900 border border-gray-800 rounded-2xl p-6 text-center">
               <div className="text-lg mb-3">{p.endpoint}</div>
